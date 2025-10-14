@@ -11,7 +11,7 @@ class NewExeat extends StatefulWidget {
 }
 
 class _NewExeatState extends State<NewExeat> {
-    String? selectedHostel;
+  String? selectedHostel;
 
   final List<String> hostels = [
     'APPROVED',
@@ -22,12 +22,12 @@ class _NewExeatState extends State<NewExeat> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    
-    double containerWidth = screenWidth < 600 ? screenWidth * 0.9 : screenWidth * 0.4;
+    double containerWidth =
+        screenWidth < 600 ? screenWidth * 0.9 : screenWidth * 0.4;
     double fontSizeTitle = screenWidth < 600 ? 24 : 32;
     double fontSizeButton = screenWidth < 600 ? 14 : 18;
     double paddingValue = screenWidth < 600 ? 12 : 20;
-    return  Scaffold(
+    return Scaffold(
       body: Center(
         child: SingleChildScrollView(
           child: Container(
@@ -61,31 +61,19 @@ class _NewExeatState extends State<NewExeat> {
                     color: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const TextField(
-                    decoration: InputDecoration(
-                      hintText: 'DESCRIPTION',
-                      border: InputBorder.none,
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 25),
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child:  TextField(
+                  child: TextField(
                     decoration: const InputDecoration(
                       hintText: 'Contact information',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                    ),keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                   ),
                 ),
                 const SizedBox(height: 25),
-                
                 Row(
                   children: [
                     Container(
@@ -100,7 +88,10 @@ class _NewExeatState extends State<NewExeat> {
                           contentPadding: EdgeInsets.symmetric(horizontal: 12),
                         ),
                       ),
-                    ),const SizedBox(width: 10,),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.grey.shade300,
@@ -131,7 +122,10 @@ class _NewExeatState extends State<NewExeat> {
                           contentPadding: EdgeInsets.symmetric(horizontal: 12),
                         ),
                       ),
-                    ),const SizedBox(width: 10,),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
                     Container(
                       decoration: BoxDecoration(
                         color: Colors.grey.shade300,
@@ -148,7 +142,6 @@ class _NewExeatState extends State<NewExeat> {
                   ],
                 ),
                 const SizedBox(height: 25),
-
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey.shade300,
@@ -163,7 +156,6 @@ class _NewExeatState extends State<NewExeat> {
                   ),
                 ),
                 const SizedBox(height: 25),
-
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey.shade300,
@@ -182,57 +174,71 @@ class _NewExeatState extends State<NewExeat> {
                     color: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child:  TextField(
+                  child: TextField(
                     decoration: const InputDecoration(
                       hintText: 'EMERGENCY CONTACT NUMBER',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
-                    ),keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly,],
+                    ),
+                    keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.digitsOnly,
+                    ],
                   ),
                 ),
-                
                 const SizedBox(height: 25),
-     Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: screenWidth * 0.02,
-        vertical: 5,
-      ),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade400),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          value: selectedHostel,
-          isExpanded: true, 
-          hint: const Text("Select Your Hostel"),
-          icon: const Icon(Icons.arrow_drop_down),
-          items: hostels.map((String hostel) {
-            return DropdownMenuItem<String>(
-              value: hostel,
-              child: Text(hostel),
-            );
-          }).toList(),
-          onChanged: (String? newValue) {
-            setState(() {
-              selectedHostel = newValue!;
-            });
-          },
-        ),
-      ),
-    ),
-               const SizedBox(height: 20),
-                 GestureDetector(
-                   child: Container(
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: const Color(0xff060121)),
-                    padding: EdgeInsets.symmetric(horizontal: paddingValue * 1.2, vertical: paddingValue * 0.8),
-                    child:  Center(child: Text("SUBMIT REQUEST",
-                    style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: fontSizeButton ),),),),
+                Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: screenWidth * 0.02,
+                    vertical: 5,
+                  ),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.grey.shade400),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: selectedHostel,
+                      isExpanded: true,
+                      hint: const Text("Select Your Hostel"),
+                      icon: const Icon(Icons.arrow_drop_down),
+                      items: hostels.map((String hostel) {
+                        return DropdownMenuItem<String>(
+                          value: hostel,
+                          child: Text(hostel),
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedHostel = newValue!;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 20),
+                GestureDetector(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xff060121)),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: paddingValue * 1.2,
+                        vertical: paddingValue * 0.8),
+                    child: Center(
+                      child: Text(
+                        "SUBMIT REQUEST",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSizeButton),
+                      ),
+                    ),
+                  ),
                   onTap: () {
-                            Get.to(() => const HomePage());
-                          },
-                 ),
+                    Get.to(() => const HomePage());
+                  },
+                ),
               ],
             ),
           ),

@@ -1,9 +1,9 @@
-
 import 'package:exeat_system/new_exeat_form.dart';
+import 'package:exeat_system/notificatons.dart';
+import 'package:exeat_system/profile.dart';
 import 'package:exeat_system/request_history.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -20,7 +20,6 @@ class _HomePageState extends State<HomePage> {
     final isSmallScreen = screenWidth < 600;
     final isMediumScreen = screenWidth >= 600 && screenWidth < 1000;
 
-    // Responsive values
     double containerWidth = isSmallScreen
         ? screenWidth * 0.95
         : isMediumScreen
@@ -39,14 +38,13 @@ class _HomePageState extends State<HomePage> {
             ? 16
             : 18;
 
-    
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
           backgroundColor: const Color(0xff060121),
-          leading:  const Icon(Icons.settings, color: Colors.white),
+          leading: const Icon(Icons.settings, color: Colors.white),
           titleSpacing: 5,
           title: Padding(
             padding:
@@ -75,13 +73,14 @@ class _HomePageState extends State<HomePage> {
         padding: EdgeInsets.all(paddingValue),
         child: Center(
           child: Container(
-            width: containerWidth  * 4,
+            width: containerWidth * 4,
             padding: EdgeInsets.all(paddingValue * 2),
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xff060121)),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: Column(crossAxisAlignment: CrossAxisAlignment.start,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   "ILESANMI DANIEL",
@@ -103,8 +102,8 @@ class _HomePageState extends State<HomePage> {
                         paddingValue,
                       ),
                       onTap: () {
-                            Get.to(() => const NewExeatForm());
-                          },
+                        Get.to(() => const NewExeatForm());
+                      },
                     ),
                     GestureDetector(
                       child: _infoCard(
@@ -114,8 +113,8 @@ class _HomePageState extends State<HomePage> {
                         paddingValue,
                       ),
                       onTap: () {
-                            Get.to(() => const RequestHistory());
-                          },
+                        Get.to(() => const RequestHistory());
+                      },
                     ),
                   ],
                 ),
@@ -123,17 +122,27 @@ class _HomePageState extends State<HomePage> {
                 _responsiveRow(
                   paddingValue,
                   [
-                    _infoCard(
-                      Icons.notifications,
-                      "NOTIFICATIONS",
-                      "View important updates and alerts regarding your requests",
-                      paddingValue,
+                    GestureDetector(
+                      child: _infoCard(
+                        Icons.notifications,
+                        "NOTIFICATIONS",
+                        "View important updates and alerts regarding your requests",
+                        paddingValue,
+                      ),
+                      onTap: () {
+                        Get.to(() => const Notifications());
+                      },
                     ),
-                    _infoCard(
-                      Icons.person,
-                      "PROFILE",
-                      "Manage your personal information and account settings.",
-                      paddingValue,
+                    GestureDetector(
+                      child: _infoCard(
+                        Icons.person,
+                        "PROFILE",
+                        "Manage your personal information and account settings.",
+                        paddingValue,
+                      ),
+                      onTap: () {
+                        Get.to(() => const Profile());
+                      },
                     ),
                   ],
                 ),

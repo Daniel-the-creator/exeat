@@ -53,7 +53,8 @@ class _NewExeatFormState extends State<NewExeatForm> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    double containerWidth = screenWidth < 600 ? screenWidth * 0.9 : screenWidth * 0.4;
+    double containerWidth =
+        screenWidth < 600 ? screenWidth * 0.9 : screenWidth * 0.4;
     double fontSizeTitle = screenWidth < 600 ? 24 : 32;
     double fontSizeSubtitle = screenWidth < 600 ? 14 : 18;
     double fontSizeButton = screenWidth < 600 ? 14 : 18;
@@ -73,13 +74,23 @@ class _NewExeatFormState extends State<NewExeatForm> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Text(
-                  "NEW EXEAT REQUEST",
-                  style: TextStyle(
-                    color: const Color(0xff060121),
-                    fontWeight: FontWeight.bold,
-                    fontSize: fontSizeTitle,
-                  ),
+                Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Get.to(() => const HomePage()),
+                      child: const Icon(Icons.arrow_back_ios_new,
+                          color: Colors.black87, size: 22),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      "New Exeat Form",
+                      style: TextStyle(
+                        color: const Color(0xff060121),
+                        fontWeight: FontWeight.bold,
+                        fontSize: fontSizeTitle,
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 8),
                 Text(
@@ -91,17 +102,12 @@ class _NewExeatFormState extends State<NewExeatForm> {
                   ),
                 ),
                 const SizedBox(height: 25),
-
-                _buildTextField("DESCRIPTION"),
-                const SizedBox(height: 25),
-
                 _buildTextField(
                   "PHONE NUMBER",
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
                 const SizedBox(height: 25),
-
                 Row(
                   children: [
                     Expanded(
@@ -122,7 +128,6 @@ class _NewExeatFormState extends State<NewExeatForm> {
                   ],
                 ),
                 const SizedBox(height: 25),
-
                 Row(
                   children: [
                     Expanded(
@@ -143,20 +148,16 @@ class _NewExeatFormState extends State<NewExeatForm> {
                   ],
                 ),
                 const SizedBox(height: 25),
-
                 _buildTextField("REASON FOR EXEAT"),
                 const SizedBox(height: 25),
-
                 _buildTextField("EMERGENCY CONTACT PERSON"),
                 const SizedBox(height: 25),
-
                 _buildTextField(
                   "EMERGENCY CONTACT NUMBER",
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                 ),
                 const SizedBox(height: 25),
-
                 Container(
                   padding: EdgeInsets.symmetric(
                     horizontal: screenWidth * 0.02,
@@ -187,7 +188,6 @@ class _NewExeatFormState extends State<NewExeatForm> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
                 GestureDetector(
                   onTap: () {
                     Get.off(() => const HomePage());
