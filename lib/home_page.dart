@@ -33,116 +33,103 @@ class _HomePageState extends State<HomePage> {
             : 16;
 
     double fontSizeTitle = isSmallScreen
-        ? 14
+        ? 18
         : isMediumScreen
-            ? 16
-            : 18;
+            ? 20
+            : 22;
 
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: const Color(0xfff8f9ff),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
           backgroundColor: const Color(0xff060121),
-          leading: const Icon(Icons.settings, color: Colors.white),
-          titleSpacing: 5,
-          title: Padding(
-            padding:
-                EdgeInsets.symmetric(horizontal: paddingValue, vertical: 5),
-            child: LayoutBuilder(
-              builder: (context, constraints) {
-                return const Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "WELCOME!",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    )
-                  ],
-                );
-              },
-            ),
+          elevation: 0,
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                "WELCOME!",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.2,
+                ),
+              ),
+              IconButton(
+                icon: const Icon(Icons.settings, color: Colors.white),
+                onPressed: () {},
+              ),
+            ],
           ),
         ),
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(paddingValue),
+        padding: EdgeInsets.all(paddingValue * 2),
         child: Center(
           child: Container(
-            width: containerWidth * 4,
+            width: containerWidth,
             padding: EdgeInsets.all(paddingValue * 2),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xff060121)),
-              borderRadius: BorderRadius.circular(10),
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: const [
+                BoxShadow(
+                  color: Colors.black12,
+                  blurRadius: 10,
+                  offset: Offset(0, 5),
+                )
+              ],
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "ILESANMI DANIEL",
+                  "Ilesanmi Daniel",
                   style: TextStyle(
                     color: const Color(0xff060121),
                     fontSize: fontSizeTitle,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
+                const SizedBox(height: 25),
+                _responsiveRow(
+                  paddingValue,
+                  [
+                    _infoCard(
+                      Icons.add_chart,
+                      "APPLY FOR EXEAT",
+                      "Submit a new request for leave from the campus.",
+                      Colors.blueAccent,
+                      () => Get.to(() => const NewExeatForm()),
+                    ),
+                    _infoCard(
+                      Icons.list_alt_sharp,
+                      "VIEW REQUESTS",
+                      "Check the status and details of your past exeat requests.",
+                      Colors.orangeAccent,
+                      () => Get.to(() => const RequestHistory()),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 20),
                 _responsiveRow(
                   paddingValue,
                   [
-                    GestureDetector(
-                      child: _infoCard(
-                        Icons.add_chart,
-                        "APPLY FOR EXEAT",
-                        "Submit a new request for leave from the campus.",
-                        paddingValue,
-                      ),
-                      onTap: () {
-                        Get.to(() => const NewExeatForm());
-                      },
+                    _infoCard(
+                      Icons.notifications_active,
+                      "NOTIFICATIONS",
+                      "View important updates and alerts regarding your requests.",
+                      Colors.purpleAccent,
+                      () => Get.to(() => const Notifications()),
                     ),
-                    GestureDetector(
-                      child: _infoCard(
-                        Icons.list_alt_sharp,
-                        "VIEW REQUEST",
-                        "Check the status and details of your past exeat requests.",
-                        paddingValue,
-                      ),
-                      onTap: () {
-                        Get.to(() => const RequestHistory());
-                      },
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                _responsiveRow(
-                  paddingValue,
-                  [
-                    GestureDetector(
-                      child: _infoCard(
-                        Icons.notifications,
-                        "NOTIFICATIONS",
-                        "View important updates and alerts regarding your requests",
-                        paddingValue,
-                      ),
-                      onTap: () {
-                        Get.to(() => const Notifications());
-                      },
-                    ),
-                    GestureDetector(
-                      child: _infoCard(
-                        Icons.person,
-                        "PROFILE",
-                        "Manage your personal information and account settings.",
-                        paddingValue,
-                      ),
-                      onTap: () {
-                        Get.to(() => const Profile());
-                      },
+                    _infoCard(
+                      Icons.person_outline,
+                      "PROFILE",
+                      "Manage your personal info and account settings.",
+                      Colors.teal,
+                      () => Get.to(() => const Profile()),
                     ),
                   ],
                 ),
@@ -154,53 +141,49 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // -------------------- Helper Widgets --------------------
-
-  Widget _menuItem(String title, double fontSize, double paddingValue) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        horizontal: paddingValue * 1.2,
-        vertical: paddingValue * 0.5,
-      ),
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.white),
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Text(
-        title,
-        style: TextStyle(color: Colors.white, fontSize: fontSize),
-      ),
-    );
-  }
-
-  Widget _infoCard(
-      IconData icon, String title, String description, double paddingValue) {
+  Widget _infoCard(IconData icon, String title, String description, Color color,
+      VoidCallback onTap) {
     return Expanded(
-      child: Container(
-        margin: EdgeInsets.only(bottom: paddingValue),
-        padding: EdgeInsets.all(paddingValue),
-        decoration: BoxDecoration(
-          border: Border.all(color: const Color(0xff060121), width: 2),
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: const Color(0xff060121)),
-            const SizedBox(height: 10),
-            Text(
-              title,
-              style: const TextStyle(
-                color: Color(0xff060121),
-                fontWeight: FontWeight.bold,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          padding: const EdgeInsets.all(18),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [color.withOpacity(0.9), color.withOpacity(0.6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(14),
+            boxShadow: [
+              BoxShadow(
+                color: color.withOpacity(0.3),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(icon, color: Colors.white, size: 30),
+              const SizedBox(height: 15),
+              Text(
+                title,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: const TextStyle(color: Color(0xff060121)),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                description,
+                style: const TextStyle(color: Colors.white70, fontSize: 14),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -210,7 +193,6 @@ class _HomePageState extends State<HomePage> {
     return LayoutBuilder(
       builder: (context, constraints) {
         if (constraints.maxWidth < 600) {
-          // Stack vertically on small screens
           return Column(
             children: children
                 .map((child) => Padding(
@@ -220,14 +202,12 @@ class _HomePageState extends State<HomePage> {
                 .toList(),
           );
         } else {
-          // Place side-by-side on large screens
           return Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               for (int i = 0; i < children.length; i++) ...[
                 Expanded(child: children[i]),
-                if (i < children.length - 1)
-                  SizedBox(width: paddingValue * 2), // space between
+                if (i < children.length - 1) SizedBox(width: paddingValue * 2),
               ]
             ],
           );

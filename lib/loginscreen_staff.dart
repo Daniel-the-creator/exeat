@@ -1,3 +1,4 @@
+import 'package:exeat_system/admin_dashboard.dart';
 import 'package:exeat_system/forgot_password.dart';
 import 'package:exeat_system/login_screen__student.dart';
 import 'package:exeat_system/signup_staff.dart';
@@ -12,13 +13,14 @@ class LoginscreenStaff extends StatefulWidget {
 }
 
 class _LoginscreenStaffState extends State<LoginscreenStaff> {
-   bool _obscurePassword = true;
+  bool _obscurePassword = true;
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    double containerWidth = screenWidth < 600 ? screenWidth * 0.9 : screenWidth * 0.4;
+    double containerWidth =
+        screenWidth < 600 ? screenWidth * 0.9 : screenWidth * 0.4;
     double fontSizeTitle = screenWidth < 600 ? 24 : 32;
     double fontSizeButton = screenWidth < 600 ? 14 : 18;
     double paddingValue = screenWidth < 600 ? 12 : 20;
@@ -45,7 +47,6 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
                   ),
                 ),
                 const SizedBox(height: 20),
-
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -56,7 +57,7 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
                           vertical: paddingValue * 0.6,
                         ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5),
+                          borderRadius: BorderRadius.circular(15),
                           color: Colors.grey,
                         ),
                         child: Text(
@@ -68,9 +69,9 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
                           ),
                         ),
                       ),
-                       onTap: () {
-                            Get.to(() => const LoginScreen());
-                          },
+                      onTap: () {
+                        Get.to(() => const LoginScreen());
+                      },
                     ),
                     const SizedBox(width: 10),
                     Container(
@@ -79,7 +80,7 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
                         vertical: paddingValue * 0.6,
                       ),
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(5),
+                        borderRadius: BorderRadius.circular(15),
                         color: const Color(0xff060121),
                       ),
                       child: Text(
@@ -93,9 +94,7 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 25),
-
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey.shade300,
@@ -110,9 +109,7 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
-
                 Container(
                   decoration: BoxDecoration(
                     color: Colors.grey.shade300,
@@ -142,27 +139,62 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20,),
-                 Container(
-                  decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),color: const Color(0xff060121)),
-                  padding: EdgeInsets.symmetric(horizontal: paddingValue * 1.2, vertical: paddingValue * 0.8),
-                  child:  Center(child: Text("LOG IN",
-                  style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold, fontSize: fontSizeButton ),),),),
-                 const SizedBox(height: 20,),
-                 Center(child: GestureDetector(child: Text("Forgot password?",style: TextStyle( fontSize: fontSizeButton),),
-                 onTap: () {
-                            Get.to(() => const ForgotPassword());
-                          },
-                 ),), 
-             const SizedBox(height: 20,),
-                 Center(child: GestureDetector(
-                   child: Text("don't have an account? Sign Up",
-                   style: TextStyle(decoration: TextDecoration.underline, fontSize: fontSizeButton),),
-                 onTap: () {
-                            Get.to(() => const SignupStaff());
-                          },
-                 ),
-                 ),],
+                const SizedBox(
+                  height: 20,
+                ),
+                GestureDetector(
+                  child: Container(
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xff060121)),
+                    padding: EdgeInsets.symmetric(
+                        horizontal: paddingValue * 1.2,
+                        vertical: paddingValue * 0.8),
+                    child: Center(
+                      child: Text(
+                        "LOG IN",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: fontSizeButton),
+                      ),
+                    ),
+                  ),
+                  onTap: () {
+                    Get.to(() => const AdminDashboard());
+                  },
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Center(
+                  child: GestureDetector(
+                    child: Text(
+                      "Forgot password?",
+                      style: TextStyle(fontSize: fontSizeButton),
+                    ),
+                    onTap: () {
+                      Get.to(() => const ForgotPassword());
+                    },
+                  ),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Center(
+                  child: GestureDetector(
+                    child: Text(
+                      "don't have an account? Sign Up",
+                      style: TextStyle(
+                          decoration: TextDecoration.underline,
+                          fontSize: fontSizeButton),
+                    ),
+                    onTap: () {
+                      Get.to(() => const SignupStaff());
+                    },
+                  ),
+                ),
+              ],
             ),
           ),
         ),

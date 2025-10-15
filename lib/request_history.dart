@@ -48,46 +48,56 @@ class _RequestHistoryState extends State<RequestHistory> {
     },
   ];
 
-  void _onViewPressed(String requestId) {
+  void _onViewPressed(Map<String, String> request) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: const Text(
-          "Request Details",
-          style:
-              TextStyle(fontWeight: FontWeight.bold, color: Color(0xff060121)),
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              _DetailRow(title: "Destination:", value: "Abuja"),
-              _DetailRow(
-                  title: "Contact Information:", value: "09068149671 (Parent)"),
-              _DetailRow(
-                  title: "Leave date and time:", value: "2025-07-25, 6:00 PM"),
-              _DetailRow(
-                  title: "Return date and time:", value: "2025-07-28, 3:00 PM"),
-              _DetailRow(
-                  title: "Reason:",
-                  value: "Family emergency requesting my presence"),
-              _StatusBadge(status: "Approved", color: Colors.green),
-              _DetailRow(
-                  title: "Administrator's comment:",
-                  value:
-                      "Request approved, please ensure you submit all course work. Safe trip!"),
-            ],
+      builder: (context) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final isSmallScreen = screenWidth < 600;
+
+        return AlertDialog(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+          title: const Text(
+            "Request Details",
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: Color(0xff060121)),
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child:
-                const Text("Close", style: TextStyle(color: Colors.blueGrey)),
+          content: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _DetailRow(
+                    title: "Destination:", value: request["destination"]!),
+                _DetailRow(title: "Leave Date:", value: request["leaveDate"]!),
+                _DetailRow(
+                    title: "Return Date:", value: request["returnDate"]!),
+                const _DetailRow(
+                    title: "Reason:",
+                    value: "Family emergency requesting my presence."),
+                _StatusBadge(
+                  status: request["status"]!,
+                  color: _statusColor(request["status"]!),
+                ),
+                const _DetailRow(
+                    title: "Admin Comment:",
+                    value: "Safe trip, ensure you report on time."),
+              ],
+            ),
           ),
-        ],
-      ),
+          actionsAlignment:
+              isSmallScreen ? MainAxisAlignment.center : MainAxisAlignment.end,
+          actionsPadding:
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child:
+                  const Text("Close", style: TextStyle(color: Colors.blueGrey)),
+            ),
+          ],
+        );
+      },
     );
   }
 
@@ -107,9 +117,7 @@ class _RequestHistoryState extends State<RequestHistory> {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    double containerWidth =
-        screenWidth < 600 ? screenWidth * 0.95 : screenWidth * 0.9;
-    double fontSizeTitle = screenWidth < 600 ? 22 : 28;
+    final isSmallScreen = screenWidth < 700;
 
     return Scaffold(
       backgroundColor: const Color(0xfff7f8fa),
@@ -118,7 +126,7 @@ class _RequestHistoryState extends State<RequestHistory> {
           child: SingleChildScrollView(
             physics: const BouncingScrollPhysics(),
             child: Container(
-              width: containerWidth,
+              width: isSmallScreen ? screenWidth * 0.95 : screenWidth * 0.9,
               padding: const EdgeInsets.all(20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,18 +141,18 @@ class _RequestHistoryState extends State<RequestHistory> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        "Request History",
+                        "Request History (${tableData.length})",
                         style: TextStyle(
                           color: const Color(0xff060121),
                           fontWeight: FontWeight.bold,
-                          fontSize: fontSizeTitle,
+                          fontSize: isSmallScreen ? 22 : 28,
                         ),
                       ),
                     ],
                   ),
                   const SizedBox(height: 25),
 
-                  // Table Cards
+                  // Table/List
                   Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -166,9 +174,9 @@ class _RequestHistoryState extends State<RequestHistory> {
                             borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(15)),
                           ),
-                          child: const Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
+                            children: const [
                               _HeaderText("ID"),
                               _HeaderText("Destination"),
                               _HeaderText("Leave"),
@@ -178,56 +186,131 @@ class _RequestHistoryState extends State<RequestHistory> {
                             ],
                           ),
                         ),
+
+                        // Data Rows
                         ...tableData.map(
-                          (row) => Container(
-                            decoration: BoxDecoration(
-                              border: Border(
-                                bottom: BorderSide(
-                                    color: Colors.grey.shade300, width: 1),
-                              ),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 6),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: [
-                                _TableText(row['id']!),
-                                _TableText(row['destination']!),
-                                _TableText(row['leaveDate']!),
-                                _TableText(row['returnDate']!),
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10, vertical: 4),
+                          (row) => LayoutBuilder(
+                            builder: (context, constraints) {
+                              if (isSmallScreen) {
+                                // Mobile-friendly card layout
+                                return Container(
+                                  margin: const EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 6),
+                                  padding: const EdgeInsets.all(12),
                                   decoration: BoxDecoration(
-                                    color: _statusColor(row['status']!)
-                                        .withOpacity(0.2),
-                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(
+                                        color: Colors.grey.shade300, width: 1),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        blurRadius: 6,
+                                        offset: const Offset(0, 3),
+                                      ),
+                                    ],
                                   ),
-                                  child: Text(
-                                    row['status']!,
-                                    style: TextStyle(
-                                      color: _statusColor(row['status']!),
-                                      fontWeight: FontWeight.w600,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      _DetailRow(
+                                          title: "ID:", value: row["id"]!),
+                                      _DetailRow(
+                                          title: "Destination:",
+                                          value: row["destination"]!),
+                                      _DetailRow(
+                                          title: "Leave Date:",
+                                          value: row["leaveDate"]!),
+                                      _DetailRow(
+                                          title: "Return Date:",
+                                          value: row["returnDate"]!),
+                                      Row(
+                                        children: [
+                                          _StatusBadge(
+                                            status: row["status"]!,
+                                            color: _statusColor(row["status"]!),
+                                          ),
+                                          const Spacer(),
+                                          ElevatedButton(
+                                            onPressed: () =>
+                                                _onViewPressed(row),
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor:
+                                                  Colors.blueGrey.shade700,
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                            ),
+                                            child: const Text("View",
+                                                style: TextStyle(
+                                                    color: Colors.white)),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              } else {
+                                // Desktop/table layout
+                                return Container(
+                                  decoration: BoxDecoration(
+                                    border: Border(
+                                      bottom: BorderSide(
+                                          color: Colors.grey.shade300,
+                                          width: 1),
                                     ),
                                   ),
-                                ),
-                                ElevatedButton(
-                                  onPressed: () => _onViewPressed(row['id']!),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blueGrey.shade700,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 8),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 10, horizontal: 6),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      _TableText(row["id"]!),
+                                      _TableText(row["destination"]!),
+                                      _TableText(row["leaveDate"]!),
+                                      _TableText(row["returnDate"]!),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 10, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: _statusColor(row["status"]!)
+                                              .withOpacity(0.2),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Text(
+                                          row["status"]!,
+                                          style: TextStyle(
+                                            color: _statusColor(row["status"]!),
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                      ElevatedButton(
+                                        onPressed: () => _onViewPressed(row),
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              Colors.blueGrey.shade700,
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 14, vertical: 8),
+                                        ),
+                                        child: const Text(
+                                          "View",
+                                          style: TextStyle(color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                  child: const Text(
-                                    "View",
-                                    style: TextStyle(color: Colors.white),
-                                  ),
-                                ),
-                              ],
-                            ),
+                                );
+                              }
+                            },
                           ),
                         ),
                       ],
@@ -281,7 +364,7 @@ class _DetailRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
+      padding: const EdgeInsets.only(bottom: 8),
       child: RichText(
         text: TextSpan(
           children: [
@@ -310,16 +393,16 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8),
+      margin: const EdgeInsets.only(top: 5, bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.2),
+        color: color.withOpacity(0.15),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         status,
         style:
-            TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 14),
+            TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13),
       ),
     );
   }
