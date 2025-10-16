@@ -1,3 +1,7 @@
+import 'package:exeat_system/approved_request.dart';
+import 'package:exeat_system/data_analysis.dart';
+import 'package:exeat_system/declined_request.dart';
+import 'package:exeat_system/notification__admin.dart';
 import 'package:exeat_system/pending_request.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -12,7 +16,7 @@ class AdminDashboard extends StatefulWidget {
 class _AdminDashboardState extends State<AdminDashboard> {
   int pendingRequests = 5;
   int approvedRequests = 12;
-  int declinedRequests = 2;
+  int declinedRequests = 12;
 
   @override
   Widget build(BuildContext context) {
@@ -32,10 +36,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        backgroundColor: const Color(0xff060121),
         title: const Text(
           "Admin Dashboard",
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+          style:
+              TextStyle(color: Color(0xff060121), fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -48,12 +52,12 @@ class _AdminDashboardState extends State<AdminDashboard> {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   color: Colors.black12,
                   blurRadius: 8,
                   spreadRadius: 2,
-                  offset: const Offset(0, 3),
+                  offset: Offset(0, 3),
                 ),
               ],
             ),
@@ -114,7 +118,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       description: "See all approved exeat requests.",
                       color: Colors.green[100]!,
                       onTap: () {
-                        // Get.to(() => const ApprovedRequestsPage());
+                        Get.to(() => const ApprovedRequests());
                       },
                     ),
                     _actionCard(
@@ -123,7 +127,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       description: "Review all declined exeat requests.",
                       color: Colors.red[100]!,
                       onTap: () {
-                        // Get.to(() => const DeclinedRequestsPage());
+                        Get.to(() => const DeclinedRequests());
                       },
                     ),
                     _actionCard(
@@ -132,7 +136,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                       description: "Check important updates or system alerts.",
                       color: Colors.blue[100]!,
                       onTap: () {
-                        // Get.to(() => const NotificationsPage());
+                        Get.to(() => const AdminNotifications());
                       },
                     ),
                     _actionCard(
@@ -142,7 +146,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           "View student list and monitor exeat activity.",
                       color: Colors.purple[100]!,
                       onTap: () {
-                        // Get.to(() => const StudentListPage());
+                        Get.to(() => const ViewExeatActivity());
                       },
                     ),
                   ],
@@ -206,11 +210,11 @@ class _AdminDashboardState extends State<AdminDashboard> {
         decoration: BoxDecoration(
           color: color,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black12,
               blurRadius: 5,
-              offset: const Offset(0, 3),
+              offset: Offset(0, 3),
             ),
           ],
         ),

@@ -2,6 +2,7 @@ import 'package:exeat_system/editprofile.dart';
 import 'package:exeat_system/home_page.dart';
 import 'package:exeat_system/login_screen__student.dart';
 import 'package:exeat_system/profile_controller.dart';
+import 'package:exeat_system/set_new_password.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -157,23 +158,26 @@ class Profile extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 15),
-                      Container(
-                        width: double.infinity,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade300,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                        child: Center(
-                          child: Text(
-                            "Change Password",
-                            style: TextStyle(
-                              fontSize: fontSizeButton,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black,
+                      GestureDetector(
+                        child: Container(
+                          width: double.infinity,
+                          decoration: BoxDecoration(
+                            color: Colors.grey.shade300,
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          child: Center(
+                            child: Text(
+                              "Change Password",
+                              style: TextStyle(
+                                fontSize: fontSizeButton,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
+                        onTap: () => Get.to(() => const SetNewPassword()),
                       ),
                       const SizedBox(height: 15),
                       GestureDetector(

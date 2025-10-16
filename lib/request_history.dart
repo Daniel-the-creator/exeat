@@ -174,9 +174,9 @@ class _RequestHistoryState extends State<RequestHistory> {
                             borderRadius: const BorderRadius.vertical(
                                 top: Radius.circular(15)),
                           ),
-                          child: Row(
+                          child: const Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: const [
+                            children: [
                               _HeaderText("ID"),
                               _HeaderText("Destination"),
                               _HeaderText("Leave"),

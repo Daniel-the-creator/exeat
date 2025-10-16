@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
               ),
               IconButton(
                 icon: const Icon(Icons.settings, color: Colors.white),
-                onPressed: () {},
+                onPressed: () => Get.to(() => const Profile()),
               ),
             ],
           ),
@@ -106,7 +106,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     _infoCard(
                       Icons.list_alt_sharp,
-                      "VIEW REQUESTS",
+                      "VIEW REQUESTS HISTORY",
                       "Check the status and details of your past exeat requests.",
                       Colors.orangeAccent,
                       () => Get.to(() => const RequestHistory()),

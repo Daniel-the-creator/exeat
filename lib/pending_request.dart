@@ -183,11 +183,11 @@ class _PendingRequestsState extends State<PendingRequests> {
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(14),
-                        boxShadow: [
+                        boxShadow: const [
                           BoxShadow(
                               color: Colors.black12,
                               blurRadius: 10,
-                              offset: const Offset(0, 4))
+                              offset: Offset(0, 4))
                         ],
                       ),
                       child: Padding(
@@ -281,9 +281,9 @@ class _PendingRequestsState extends State<PendingRequests> {
           decoration: BoxDecoration(
               color: Colors.blueGrey.shade700,
               borderRadius: BorderRadius.circular(8)),
-          child: Row(
+          child: const Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: const [
+            children: [
               Flexible(flex: 1, child: Center(child: _HeaderText("ID"))),
               Flexible(flex: 3, child: Center(child: _HeaderText("Student"))),
               Flexible(
@@ -352,7 +352,7 @@ class _PendingRequestsState extends State<PendingRequests> {
 
 class _HeaderText extends StatelessWidget {
   final String text;
-  const _HeaderText(this.text, {super.key});
+  const _HeaderText(this.text);
 
   @override
   Widget build(BuildContext context) {
@@ -364,7 +364,7 @@ class _HeaderText extends StatelessWidget {
 
 class _TableText extends StatelessWidget {
   final String text;
-  const _TableText(this.text, {super.key});
+  const _TableText(this.text);
 
   @override
   Widget build(BuildContext context) {
@@ -378,7 +378,7 @@ class _TableText extends StatelessWidget {
 class _DetailRow extends StatelessWidget {
   final String title;
   final String value;
-  const _DetailRow({required this.title, required this.value, super.key});
+  const _DetailRow({required this.title, required this.value});
 
   @override
   Widget build(BuildContext context) {
@@ -403,7 +403,7 @@ class _DetailRow extends StatelessWidget {
 class _StatusBadge extends StatelessWidget {
   final String status;
   final Color color;
-  const _StatusBadge({required this.status, required this.color, super.key});
+  const _StatusBadge({required this.status, required this.color});
 
   @override
   Widget build(BuildContext context) {
