@@ -1,6 +1,7 @@
 import 'package:exeat_system/new_exeat_form.dart';
 import 'package:exeat_system/notificatons.dart';
 import 'package:exeat_system/profile.dart';
+import 'package:exeat_system/profile_controller.dart'; // Add this import
 import 'package:exeat_system/request_history.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -15,6 +16,9 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
+    // Initialize the controller
+    final profileController = Get.put(ProfileController());
+
     final screenSize = MediaQuery.of(context).size;
     final screenWidth = screenSize.width;
     final isSmallScreen = screenWidth < 600;
@@ -39,7 +43,6 @@ class _HomePageState extends State<HomePage> {
             : 22;
 
     return Scaffold(
-      backgroundColor: const Color(0xfff8f9ff),
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(70),
         child: AppBar(
@@ -85,14 +88,15 @@ class _HomePageState extends State<HomePage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  "NAME OF STUDENT",
-                  style: TextStyle(
-                    color: const Color(0xff060121),
-                    fontSize: fontSizeTitle,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                // Display full name here too
+                Obx(() => Text(
+                      profileController.fullName.value.toUpperCase(),
+                      style: TextStyle(
+                        color: const Color(0xff060121),
+                        fontSize: fontSizeTitle,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    )),
                 const SizedBox(height: 25),
                 _responsiveRow(
                   paddingValue,
@@ -141,6 +145,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // Rest of your methods remain the same
   Widget _infoCard(IconData icon, String title, String description, Color color,
       VoidCallback onTap) {
     return Expanded(

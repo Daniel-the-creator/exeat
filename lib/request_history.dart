@@ -17,6 +17,7 @@ class _RequestHistoryState extends State<RequestHistory> {
       "leaveDate": "08/10/2025",
       "returnDate": "12/10/2025",
       "status": "Approved",
+      "reason": "Family emergency requesting my presence.",
     },
     {
       "id": "002",
@@ -24,6 +25,7 @@ class _RequestHistoryState extends State<RequestHistory> {
       "leaveDate": "15/10/2025",
       "returnDate": "18/10/2025",
       "status": "Pending",
+      "reason": "Attending family wedding ceremony.",
     },
     {
       "id": "003",
@@ -31,6 +33,7 @@ class _RequestHistoryState extends State<RequestHistory> {
       "leaveDate": "20/10/2025",
       "returnDate": "22/10/2025",
       "status": "Declined",
+      "reason": "Medical appointment with specialist.",
     },
     {
       "id": "004",
@@ -38,6 +41,7 @@ class _RequestHistoryState extends State<RequestHistory> {
       "leaveDate": "25/10/2025",
       "returnDate": "29/10/2025",
       "status": "Approved",
+      "reason": "Religious obligation and family gathering.",
     },
     {
       "id": "005",
@@ -45,59 +49,52 @@ class _RequestHistoryState extends State<RequestHistory> {
       "leaveDate": "01/11/2025",
       "returnDate": "03/11/2025",
       "status": "Pending",
+      "reason": "Important family event requiring attendance.",
     },
   ];
 
   void _onViewPressed(Map<String, String> request) {
     showDialog(
       context: context,
-      builder: (context) {
-        final screenWidth = MediaQuery.of(context).size.width;
-        final isSmallScreen = screenWidth < 600;
-
-        return AlertDialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          title: const Text(
-            "Request Details",
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: Color(0xff060121)),
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+        title: const Text(
+          "Request Details",
+          style:
+              TextStyle(fontWeight: FontWeight.bold, color: Color(0xff060121)),
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _DetailRow(title: "Request ID:", value: request["id"]!),
+              _DetailRow(title: "Destination:", value: request["destination"]!),
+              _DetailRow(title: "Leave Date:", value: request["leaveDate"]!),
+              _DetailRow(title: "Return Date:", value: request["returnDate"]!),
+              _DetailRow(title: "Reason:", value: request["reason"]!),
+              const SizedBox(height: 12),
+              _StatusBadge(
+                status: request["status"]!,
+                color: _statusColor(request["status"]!),
+              ),
+              const SizedBox(height: 12),
+              const _DetailRow(
+                title: "Admin Comment:",
+                value: "Safe trip, ensure you report on time.",
+              ),
+            ],
           ),
-          content: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _DetailRow(
-                    title: "Destination:", value: request["destination"]!),
-                _DetailRow(title: "Leave Date:", value: request["leaveDate"]!),
-                _DetailRow(
-                    title: "Return Date:", value: request["returnDate"]!),
-                const _DetailRow(
-                    title: "Reason:",
-                    value: "Family emergency requesting my presence."),
-                _StatusBadge(
-                  status: request["status"]!,
-                  color: _statusColor(request["status"]!),
-                ),
-                const _DetailRow(
-                    title: "Admin Comment:",
-                    value: "Safe trip, ensure you report on time."),
-              ],
-            ),
+        ),
+        actionsPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child:
+                const Text("Close", style: TextStyle(color: Colors.blueGrey)),
           ),
-          actionsAlignment:
-              isSmallScreen ? MainAxisAlignment.center : MainAxisAlignment.end,
-          actionsPadding:
-              const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child:
-                  const Text("Close", style: TextStyle(color: Colors.blueGrey)),
-            ),
-          ],
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -116,215 +113,222 @@ class _RequestHistoryState extends State<RequestHistory> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isSmallScreen = screenWidth < 700;
+    final screenW = MediaQuery.of(context).size.width;
+    final isSmall = screenW < 800;
+    final horizontalPadding = isSmall ? 12.0 : 32.0;
+    final contentWidth = isSmall ? screenW - (horizontalPadding * 2) : 1000.0;
+    final titleSize = isSmall ? 20.0 : 26.0;
+    final headerIconSize = isSmall ? 20.0 : 24.0;
 
     return Scaffold(
       backgroundColor: const Color(0xfff7f8fa),
       body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: Container(
-              width: isSmallScreen ? screenWidth * 0.95 : screenWidth * 0.9,
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        child: Padding(
+          padding:
+              EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header row
+              Row(
                 children: [
-                  // Header
-                  Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Get.to(() => const HomePage()),
-                        child: const Icon(Icons.arrow_back,
-                            color: Colors.black87, size: 22),
-                      ),
-                      const SizedBox(width: 10),
-                      Text(
-                        "Request History (${tableData.length})",
-                        style: TextStyle(
+                  GestureDetector(
+                    onTap: () => Get.to(() => const HomePage()),
+                    child: Icon(Icons.arrow_back_ios_new,
+                        size: headerIconSize, color: Colors.black87),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      "Request History (${tableData.length})",
+                      style: TextStyle(
                           color: const Color(0xff060121),
                           fontWeight: FontWeight.bold,
-                          fontSize: isSmallScreen ? 22 : 28,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 25),
-
-                  // Table/List
-                  Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: Colors.blueGrey.shade700,
-                            borderRadius: const BorderRadius.vertical(
-                                top: Radius.circular(15)),
-                          ),
-                          child: const Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
-                            children: [
-                              _HeaderText("ID"),
-                              _HeaderText("Destination"),
-                              _HeaderText("Leave"),
-                              _HeaderText("Return"),
-                              _HeaderText("Status"),
-                              _HeaderText("Action"),
-                            ],
-                          ),
-                        ),
-
-                        // Data Rows
-                        ...tableData.map(
-                          (row) => LayoutBuilder(
-                            builder: (context, constraints) {
-                              if (isSmallScreen) {
-                                // Mobile-friendly card layout
-                                return Container(
-                                  margin: const EdgeInsets.symmetric(
-                                      vertical: 8, horizontal: 6),
-                                  padding: const EdgeInsets.all(12),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(10),
-                                    border: Border.all(
-                                        color: Colors.grey.shade300, width: 1),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.1),
-                                        blurRadius: 6,
-                                        offset: const Offset(0, 3),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      _DetailRow(
-                                          title: "ID:", value: row["id"]!),
-                                      _DetailRow(
-                                          title: "Destination:",
-                                          value: row["destination"]!),
-                                      _DetailRow(
-                                          title: "Leave Date:",
-                                          value: row["leaveDate"]!),
-                                      _DetailRow(
-                                          title: "Return Date:",
-                                          value: row["returnDate"]!),
-                                      Row(
-                                        children: [
-                                          _StatusBadge(
-                                            status: row["status"]!,
-                                            color: _statusColor(row["status"]!),
-                                          ),
-                                          const Spacer(),
-                                          ElevatedButton(
-                                            onPressed: () =>
-                                                _onViewPressed(row),
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  Colors.blueGrey.shade700,
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                            ),
-                                            child: const Text("View",
-                                                style: TextStyle(
-                                                    color: Colors.white)),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              } else {
-                                // Desktop/table layout
-                                return Container(
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(
-                                          color: Colors.grey.shade300,
-                                          width: 1),
-                                    ),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 10, horizontal: 6),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceAround,
-                                    children: [
-                                      _TableText(row["id"]!),
-                                      _TableText(row["destination"]!),
-                                      _TableText(row["leaveDate"]!),
-                                      _TableText(row["returnDate"]!),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10, vertical: 4),
-                                        decoration: BoxDecoration(
-                                          color: _statusColor(row["status"]!)
-                                              .withOpacity(0.2),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Text(
-                                          row["status"]!,
-                                          style: TextStyle(
-                                            color: _statusColor(row["status"]!),
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                      ElevatedButton(
-                                        onPressed: () => _onViewPressed(row),
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              Colors.blueGrey.shade700,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 14, vertical: 8),
-                                        ),
-                                        child: const Text(
-                                          "View",
-                                          style: TextStyle(color: Colors.white),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              }
-                            },
-                          ),
-                        ),
-                      ],
+                          fontSize: titleSize),
                     ),
                   ),
                 ],
               ),
-            ),
+              const SizedBox(height: 18),
+
+              // Content card
+              Expanded(
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: contentWidth),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 10,
+                              offset: Offset(0, 4))
+                        ],
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12),
+                        child: isSmall ? _buildListView() : _buildTableView(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
+
+  // Mobile: stacked cards
+  Widget _buildListView() {
+    return ListView.separated(
+      itemCount: tableData.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 10),
+      padding: EdgeInsets.zero,
+      itemBuilder: (context, idx) {
+        final row = tableData[idx];
+        return Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                          color: Colors.blueGrey.shade50,
+                          borderRadius: BorderRadius.circular(8)),
+                      child: Text(row['id']!,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(row['destination']!,
+                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                    _StatusBadge(
+                      status: row["status"]!,
+                      color: _statusColor(row["status"]!),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Text("Leave: ${row['leaveDate']}"),
+                Text("Return: ${row['returnDate']}"),
+                const SizedBox(height: 10),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () => _onViewPressed(row),
+                    style: OutlinedButton.styleFrom(
+                      side: BorderSide(color: Colors.blueGrey.shade700),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    child: const Text("View Details"),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // Desktop/tablet: table-like rows
+  Widget _buildTableView() {
+    return Column(
+      children: [
+        // Header row
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          decoration: BoxDecoration(
+              color: Colors.blueGrey.shade700,
+              borderRadius: BorderRadius.circular(8)),
+          child: const Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              Flexible(flex: 1, child: Center(child: _HeaderText("ID"))),
+              Flexible(
+                  flex: 3, child: Center(child: _HeaderText("Destination"))),
+              Flexible(flex: 2, child: Center(child: _HeaderText("Leave"))),
+              Flexible(flex: 2, child: Center(child: _HeaderText("Return"))),
+              Flexible(flex: 2, child: Center(child: _HeaderText("Status"))),
+              Flexible(flex: 2, child: Center(child: _HeaderText("Action"))),
+            ],
+          ),
+        ),
+        const SizedBox(height: 8),
+        Expanded(
+          child: ListView.separated(
+            itemCount: tableData.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (context, idx) {
+              final row = tableData[idx];
+              return Padding(
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Flexible(
+                        flex: 1, child: Center(child: _TableText(row['id']!))),
+                    Flexible(
+                        flex: 3,
+                        child: Center(child: _TableText(row['destination']!))),
+                    Flexible(
+                        flex: 2,
+                        child: Center(child: _TableText(row['leaveDate']!))),
+                    Flexible(
+                        flex: 2,
+                        child: Center(child: _TableText(row['returnDate']!))),
+                    Flexible(
+                      flex: 2,
+                      child: Center(
+                        child: _StatusBadge(
+                          status: row["status"]!,
+                          color: _statusColor(row["status"]!),
+                        ),
+                      ),
+                    ),
+                    Flexible(
+                      flex: 2,
+                      child: Center(
+                        child: ElevatedButton(
+                          onPressed: () => _onViewPressed(row),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.blueGrey.shade700,
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8)),
+                          ),
+                          child: const Text("View",
+                              style: TextStyle(color: Colors.white)),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ),
+      ],
+    );
+  }
 }
+
+// ---------- Supporting widgets ----------
 
 class _HeaderText extends StatelessWidget {
   final String text;
@@ -332,10 +336,9 @@ class _HeaderText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-    );
+    return Text(text,
+        style:
+            const TextStyle(color: Colors.white, fontWeight: FontWeight.bold));
   }
 }
 
@@ -345,14 +348,10 @@ class _TableText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      text,
-      style: const TextStyle(
-        fontSize: 14,
-        color: Color(0xff060121),
-        fontWeight: FontWeight.w500,
-      ),
-    );
+    return Text(text,
+        textAlign: TextAlign.center,
+        style: const TextStyle(
+            color: Color(0xff060121), fontWeight: FontWeight.w500));
   }
 }
 
@@ -369,15 +368,11 @@ class _DetailRow extends StatelessWidget {
         text: TextSpan(
           children: [
             TextSpan(
-              text: "$title ",
-              style: const TextStyle(
-                  color: Colors.black87, fontWeight: FontWeight.w600),
-            ),
+                text: "$title ",
+                style: const TextStyle(
+                    color: Colors.black87, fontWeight: FontWeight.w700)),
             TextSpan(
-              text: value,
-              style: const TextStyle(
-                  color: Colors.black54, fontWeight: FontWeight.normal),
-            ),
+                text: value, style: const TextStyle(color: Colors.black54)),
           ],
         ),
       ),
@@ -393,17 +388,13 @@ class _StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(top: 5, bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: Text(
-        status,
-        style:
-            TextStyle(color: color, fontWeight: FontWeight.bold, fontSize: 13),
-      ),
+          color: color.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(8)),
+      child: Text(status,
+          style: TextStyle(
+              color: color, fontWeight: FontWeight.bold, fontSize: 12)),
     );
   }
 }

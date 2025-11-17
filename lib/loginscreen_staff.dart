@@ -32,8 +32,11 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
             width: containerWidth,
             padding: EdgeInsets.all(paddingValue),
             decoration: BoxDecoration(
+              color: Colors.white,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: Colors.grey),
+              border: Border.all(
+                color: const Color(0xff060121),
+              ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,

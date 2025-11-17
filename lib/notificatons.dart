@@ -22,7 +22,6 @@ class _NotificationsState extends State<Notifications> {
     double spacingValue = screenWidth < 600 ? 15 : 20;
 
     return Scaffold(
-      backgroundColor: const Color(0xfff5f6fa),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(

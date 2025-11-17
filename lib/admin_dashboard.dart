@@ -1,3 +1,4 @@
+import 'package:exeat_system/admin_profile.dart';
 import 'package:exeat_system/approved_request.dart';
 import 'package:exeat_system/data_analysis.dart';
 import 'package:exeat_system/declined_request.dart';
@@ -36,6 +37,10 @@ class _AdminDashboardState extends State<AdminDashboard> {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.settings, color: Color(0xff060121)),
+          onPressed: () => Get.to(() => const ProfileAdmin()),
+        ),
         title: const Text(
           "Admin Dashboard",
           style:
@@ -65,7 +70,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Welcome, Admin 👋",
+                  "Welcome, Admin",
                   style: TextStyle(
                     color: Color(0xff060121),
                     fontSize: 22,
