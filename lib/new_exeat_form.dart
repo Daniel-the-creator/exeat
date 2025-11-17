@@ -112,7 +112,7 @@ class _NewExeatFormState extends State<NewExeatForm> {
                   children: [
                     Expanded(
                       child: _buildDateTimeField(
-                        hint: "LEAVE DATE",
+                        hint: "DATE OF DEPARTURE",
                         controller: leaveDateController,
                         onTap: () => _selectDate(leaveDateController),
                       ),
@@ -120,7 +120,7 @@ class _NewExeatFormState extends State<NewExeatForm> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: _buildDateTimeField(
-                        hint: "LEAVE TIME",
+                        hint: "TIME OF DEPARTURE",
                         controller: leaveTimeController,
                         onTap: () => _selectTime(leaveTimeController),
                       ),

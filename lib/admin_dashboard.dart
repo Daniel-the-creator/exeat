@@ -146,7 +146,7 @@ class _AdminDashboardState extends State<AdminDashboard> {
                           "View student list and monitor exeat activity.",
                       color: Colors.purple[100]!,
                       onTap: () {
-                        Get.to(() => const ViewExeatActivity());
+                        Get.to(() => const StudentsExeatListScreen());
                       },
                     ),
                   ],

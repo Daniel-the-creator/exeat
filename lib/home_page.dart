@@ -86,7 +86,7 @@ class _HomePageState extends State<HomePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "Ilesanmi Daniel",
+                  "NAME OF STUDENT",
                   style: TextStyle(
                     color: const Color(0xff060121),
                     fontSize: fontSizeTitle,

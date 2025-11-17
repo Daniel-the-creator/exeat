@@ -103,7 +103,7 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
                   child: const TextField(
                     decoration: InputDecoration(
                       prefixIcon: Icon(Icons.mail),
-                      hintText: 'Email',
+                      labelText: 'Email',
                       border: InputBorder.none,
                       contentPadding: EdgeInsets.symmetric(horizontal: 12),
                     ),
@@ -119,7 +119,7 @@ class _LoginscreenStaffState extends State<LoginscreenStaff> {
                     obscureText: _obscurePassword,
                     decoration: InputDecoration(
                       prefixIcon: const Icon(Icons.lock),
-                      hintText: 'Password',
+                      labelText: 'Password',
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword

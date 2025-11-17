@@ -136,7 +136,7 @@ class _RequestHistoryState extends State<RequestHistory> {
                     children: [
                       GestureDetector(
                         onTap: () => Get.to(() => const HomePage()),
-                        child: const Icon(Icons.arrow_back_ios_new,
+                        child: const Icon(Icons.arrow_back,
                             color: Colors.black87, size: 22),
                       ),
                       const SizedBox(width: 10),
