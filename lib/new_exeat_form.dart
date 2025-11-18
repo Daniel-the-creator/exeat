@@ -396,10 +396,10 @@ class _NewExeatFormState extends State<NewExeatForm>
                       const SizedBox(height: 20),
 
                       // Date and Time Row
-                      Text(
+                      const Text(
                         "DEPARTURE",
                         style: TextStyle(
-                          color: const Color(0xff060121),
+                          color: Color(0xff060121),
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -429,10 +429,10 @@ class _NewExeatFormState extends State<NewExeatForm>
                       const SizedBox(height: 20),
 
                       // Return Date and Time
-                      Text(
+                      const Text(
                         "RETURN",
                         style: TextStyle(
-                          color: const Color(0xff060121),
+                          color: Color(0xff060121),
                           fontWeight: FontWeight.bold,
                           fontSize: 16,
                         ),
@@ -528,7 +528,7 @@ class _NewExeatFormState extends State<NewExeatForm>
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   if (_isSubmitting)
-                                    SizedBox(
+                                    const SizedBox(
                                       width: 20,
                                       height: 20,
                                       child: CircularProgressIndicator(
@@ -656,8 +656,8 @@ class _NewExeatFormState extends State<NewExeatForm>
               fontWeight: FontWeight.w500,
             ),
           ),
-          icon: Icon(Icons.arrow_drop_down_rounded,
-              color: const Color(0xff060121)),
+          icon: const Icon(Icons.arrow_drop_down_rounded,
+              color: Color(0xff060121)),
           items: destinations.map((String destination) {
             return DropdownMenuItem<String>(
               value: destination,
@@ -699,8 +699,8 @@ class _NewExeatFormState extends State<NewExeatForm>
               fontWeight: FontWeight.w500,
             ),
           ),
-          icon: Icon(Icons.arrow_drop_down_rounded,
-              color: const Color(0xff060121)),
+          icon: const Icon(Icons.arrow_drop_down_rounded,
+              color: Color(0xff060121)),
           items: approval.map((String approval) {
             return DropdownMenuItem<String>(
               value: approval,

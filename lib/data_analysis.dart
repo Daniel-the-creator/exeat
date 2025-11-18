@@ -1,5 +1,44 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
+import 'package:get/get.dart';
+
+// Data Models - ADD THIS AT THE TOP
+class StudentExeatSummary {
+  final String id;
+  final String name;
+  final String className;
+  final int totalDays;
+  final int totalExeats;
+  final String lastExeatDate;
+  final String? profileImage;
+  final String status;
+  final String department;
+
+  StudentExeatSummary({
+    required this.id,
+    required this.name,
+    required this.className,
+    required this.totalDays,
+    required this.totalExeats,
+    required this.lastExeatDate,
+    this.profileImage,
+    required this.status,
+    required this.department,
+  });
+}
+
+class ExeatData {
+  final String month;
+  final int days;
+  ExeatData(this.month, this.days);
+}
+
+class RecentExeat {
+  final String date;
+  final String reason;
+  final int days;
+  RecentExeat(this.date, this.reason, this.days);
+}
 
 // Main screen with list of students
 class StudentsExeatListScreen extends StatefulWidget {
@@ -13,6 +52,10 @@ class StudentsExeatListScreen extends StatefulWidget {
 class _StudentsExeatListScreenState extends State<StudentsExeatListScreen> {
   String searchQuery = '';
   String filterBy = 'All';
+  String sortBy = 'Name';
+  bool _isSearching = false;
+
+  final TextEditingController _searchController = TextEditingController();
 
   // Sample data - replace with your actual data from database
   final List<StudentExeatSummary> students = [
@@ -24,6 +67,8 @@ class _StudentsExeatListScreenState extends State<StudentsExeatListScreen> {
       totalExeats: 8,
       lastExeatDate: '5 days ago',
       profileImage: null,
+      status: 'Active',
+      department: 'Software engineering',
     ),
     StudentExeatSummary(
       id: '2',
@@ -33,6 +78,8 @@ class _StudentsExeatListScreenState extends State<StudentsExeatListScreen> {
       totalExeats: 12,
       lastExeatDate: '2 days ago',
       profileImage: null,
+      status: 'Active',
+      department: 'Software Engineering',
     ),
     StudentExeatSummary(
       id: '3',
@@ -42,6 +89,8 @@ class _StudentsExeatListScreenState extends State<StudentsExeatListScreen> {
       totalExeats: 5,
       lastExeatDate: '1 week ago',
       profileImage: null,
+      status: 'Active',
+      department: 'Accounting',
     ),
     StudentExeatSummary(
       id: '4',
@@ -51,6 +100,8 @@ class _StudentsExeatListScreenState extends State<StudentsExeatListScreen> {
       totalExeats: 10,
       lastExeatDate: '3 days ago',
       profileImage: null,
+      status: 'Inactive',
+      department: 'Software Engineering',
     ),
     StudentExeatSummary(
       id: '5',
@@ -60,54 +111,345 @@ class _StudentsExeatListScreenState extends State<StudentsExeatListScreen> {
       totalExeats: 7,
       lastExeatDate: '1 day ago',
       profileImage: null,
+      status: 'Active',
+      department: 'microbiology',
+    ),
+    StudentExeatSummary(
+      id: '6',
+      name: 'Grace Johnson',
+      className: '300l',
+      totalDays: 21,
+      totalExeats: 11,
+      lastExeatDate: '4 days ago',
+      profileImage: null,
+      status: 'Active',
+      department: 'criminology',
     ),
   ];
 
   List<StudentExeatSummary> get filteredStudents {
-    return students.where((student) {
+    List<StudentExeatSummary> filtered = students.where((student) {
       final matchesSearch = student.name
               .toLowerCase()
               .contains(searchQuery.toLowerCase()) ||
-          student.className.toLowerCase().contains(searchQuery.toLowerCase());
-      return matchesSearch;
+          student.className.toLowerCase().contains(searchQuery.toLowerCase()) ||
+          student.department.toLowerCase().contains(searchQuery.toLowerCase());
+
+      final matchesFilter = filterBy == 'All' ||
+          (filterBy == 'Active' && student.status == 'Active') ||
+          (filterBy == 'Inactive' && student.status == 'Inactive') ||
+          student.className == filterBy;
+
+      return matchesSearch && matchesFilter;
     }).toList();
+
+    // Apply sorting
+    filtered.sort((a, b) {
+      switch (sortBy) {
+        case 'Name':
+          return a.name.compareTo(b.name);
+        case 'Days (High to Low)':
+          return b.totalDays.compareTo(a.totalDays);
+        case 'Days (Low to High)':
+          return a.totalDays.compareTo(b.totalDays);
+        case 'Exeats (High to Low)':
+          return b.totalExeats.compareTo(a.totalExeats);
+        case 'Class':
+          return a.className.compareTo(b.className);
+        default:
+          return a.name.compareTo(b.name);
+      }
+    });
+
+    return filtered;
+  }
+
+  void _showFilters(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) => _buildFilterSheet(),
+    );
+  }
+
+  Widget _buildFilterSheet() {
+    return Container(
+      margin: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Filter & Sort',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff060121),
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+
+            // Filter Section
+            const Text(
+              'Filter by Status',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              children: ['All', 'Active', 'Inactive'].map((status) {
+                return FilterChip(
+                  label: Text(status),
+                  selected: filterBy == status,
+                  onSelected: (selected) {
+                    setState(() {
+                      filterBy = selected ? status : 'All';
+                    });
+                    Navigator.pop(context);
+                  },
+                );
+              }).toList(),
+            ),
+
+            const SizedBox(height: 24),
+
+            // Sort Section
+            const Text(
+              'Sort by',
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 12),
+            ...[
+              'Name',
+              'Days (High to Low)',
+              'Days (Low to High)',
+              'Exeats (High to Low)',
+              'Class'
+            ].map((option) {
+              return ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: Radio<String>(
+                  value: option,
+                  groupValue: sortBy,
+                  onChanged: (value) {
+                    setState(() {
+                      sortBy = value!;
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+                title: Text(option),
+                onTap: () {
+                  setState(() {
+                    sortBy = option;
+                  });
+                  Navigator.pop(context);
+                },
+              );
+            }).toList(),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final totalDays = students.fold(0, (sum, s) => sum + s.totalDays);
+    final totalExeats = students.fold(0, (sum, s) => sum + s.totalExeats);
+    final avgDays = totalDays / students.length;
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text(
-          'Student Exeat Analytics',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: _isSearching
+            ? TextField(
+                controller: _searchController,
+                autofocus: true,
+                decoration: const InputDecoration(
+                  hintText: 'Search students...',
+                  border: InputBorder.none,
+                  hintStyle: TextStyle(color: Colors.white70),
+                ),
+                style: const TextStyle(color: Colors.white),
+                onChanged: (value) {
+                  setState(() {
+                    searchQuery = value;
+                  });
+                },
+              )
+            : const Text(
+                'Student Exeat Analytics',
+                style: TextStyle(color: Colors.white),
+              ),
         backgroundColor: const Color(0xff060121),
         elevation: 0,
+        actions: [
+          if (_isSearching)
+            IconButton(
+              icon: const Icon(Icons.close),
+              onPressed: () {
+                setState(() {
+                  _isSearching = false;
+                  searchQuery = '';
+                  _searchController.clear();
+                });
+              },
+            )
+          else
+            IconButton(
+              icon: const Icon(Icons.search),
+              onPressed: () {
+                setState(() {
+                  _isSearching = true;
+                });
+              },
+            ),
+          IconButton(
+            icon: const Icon(Icons.filter_list),
+            onPressed: () => _showFilters(context),
+            tooltip: 'Filter & Sort',
+          ),
+          IconButton(
+            icon: const Icon(Icons.bar_chart),
+            onPressed: () {
+              Get.to(() => const OverallAnalyticsDashboard());
+            },
+            tooltip: 'Overall Analytics',
+          ),
+        ],
       ),
       body: Column(
         children: [
-          // Summary Stats
-          Padding(
+          // Enhanced Summary Stats
+          Container(
+            margin: const EdgeInsets.all(16),
             padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  const Color(0xff060121),
+                  const Color(0xff1a0f3e),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 15,
+                  offset: const Offset(0, 5),
+                ),
+              ],
+            ),
             child: Row(
               children: [
                 Expanded(
-                  child: _buildQuickStat('Total Students', '${students.length}',
-                      Icons.people, Colors.blue),
+                  child: _buildEnhancedStat(
+                    'Total Students',
+                    '${students.length}',
+                    Icons.people_outline,
+                    Colors.blue.shade300,
+                  ),
                 ),
-                const SizedBox(width: 12),
+                Container(
+                    width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
                 Expanded(
-                  child: _buildQuickStat(
-                      'Avg Days', '15.4', Icons.calendar_today, Colors.green),
+                  child: _buildEnhancedStat(
+                    'Total Days',
+                    totalDays.toString(),
+                    Icons.calendar_today,
+                    Colors.green.shade300,
+                  ),
                 ),
-                const SizedBox(width: 12),
+                Container(
+                    width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
                 Expanded(
-                  child: _buildQuickStat(
-                      'Total Exeats',
-                      '${students.fold(0, (sum, s) => sum + s.totalExeats)}',
-                      Icons.logout,
-                      Colors.orange),
+                  child: _buildEnhancedStat(
+                    'Total Exeats',
+                    totalExeats.toString(),
+                    Icons.logout,
+                    Colors.orange.shade300,
+                  ),
+                ),
+                Container(
+                    width: 1, height: 40, color: Colors.white.withOpacity(0.3)),
+                Expanded(
+                  child: _buildEnhancedStat(
+                    'Avg Days',
+                    avgDays.toStringAsFixed(1),
+                    Icons.trending_up,
+                    Colors.purple.shade300,
+                  ),
+                ),
+              ],
+            ),
+          ),
+
+          // Quick Filters
+          Container(
+            color: Colors.white,
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  _buildQuickFilter('All', 'All'),
+                  _buildQuickFilter('Active', 'Active'),
+                  _buildQuickFilter('Inactive', 'Inactive'),
+                  _buildQuickFilter('400L', '400l'),
+                  _buildQuickFilter('300L', '300l'),
+                  _buildQuickFilter('200L', '200l'),
+                  _buildQuickFilter('100L', '100l'),
+                ],
+              ),
+            ),
+          ),
+
+          // Students List Header
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Students (${filteredStudents.length})',
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xff060121),
+                  ),
+                ),
+                Text(
+                  'Sorted by: $sortBy',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
                 ),
               ],
             ),
@@ -116,26 +458,12 @@ class _StudentsExeatListScreenState extends State<StudentsExeatListScreen> {
           // Students List
           Expanded(
             child: filteredStudents.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.search_off,
-                            size: 64, color: Colors.grey[400]),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No students found',
-                          style:
-                              TextStyle(fontSize: 16, color: Colors.grey[600]),
-                        ),
-                      ],
-                    ),
-                  )
+                ? _buildEmptyState()
                 : ListView.builder(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     itemCount: filteredStudents.length,
                     itemBuilder: (context, index) {
-                      return _buildStudentCard(filteredStudents[index]);
+                      return _buildStudentCard(filteredStudents[index], index);
                     },
                   ),
           ),
@@ -144,217 +472,305 @@ class _StudentsExeatListScreenState extends State<StudentsExeatListScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label) {
-    final isSelected = filterBy == label;
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
+  Widget _buildQuickFilter(String label, String value) {
+    final isSelected = filterBy == value;
+    return Container(
+      margin: const EdgeInsets.only(right: 8),
       child: FilterChip(
         label: Text(label),
         selected: isSelected,
         onSelected: (selected) {
           setState(() {
-            filterBy = label;
+            filterBy = selected ? value : 'All';
           });
         },
-        backgroundColor: Colors.white.withOpacity(0.2),
-        selectedColor: Colors.white,
+        backgroundColor: Colors.grey[100],
+        selectedColor: const Color(0xff060121),
+        checkmarkColor: Colors.white,
         labelStyle: TextStyle(
-          color: isSelected ? Colors.indigo : Colors.white,
-          fontWeight: FontWeight.w600,
+          color: isSelected ? Colors.white : Colors.grey[700],
+          fontWeight: FontWeight.w500,
         ),
       ),
     );
   }
 
-  Widget _buildQuickStat(
+  Widget _buildEnhancedStat(
       String label, String value, IconData icon, Color color) {
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
+    return Column(
+      children: [
+        Icon(icon, color: color, size: 24),
+        const SizedBox(height: 8),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
-        ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            color: Colors.white.withOpacity(0.8),
+          ),
+          textAlign: TextAlign.center,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildStudentCard(StudentExeatSummary student, int index) {
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300 + (index * 100)),
+      margin: const EdgeInsets.only(bottom: 12),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => StudentDetailAnalyticsScreen(
+                  studentId: student.id,
+                  studentName: student.name,
+                ),
+              ),
+            );
+          },
+          borderRadius: BorderRadius.circular(16),
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.08),
+                  blurRadius: 12,
+                  offset: const Offset(0, 3),
+                ),
+              ],
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  // Profile Picture with Status
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 28,
+                        backgroundColor: Colors.indigo[100],
+                        child: student.profileImage != null
+                            ? ClipOval(
+                                child: Image.network(student.profileImage!,
+                                    fit: BoxFit.cover))
+                            : Text(
+                                student.name
+                                    .split(' ')
+                                    .map((n) => n[0])
+                                    .take(2)
+                                    .join(),
+                                style: TextStyle(
+                                  color: Colors.indigo[700],
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18,
+                                ),
+                              ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: Container(
+                          width: 16,
+                          height: 16,
+                          decoration: BoxDecoration(
+                            color: student.status == 'Active'
+                                ? Colors.green
+                                : Colors.grey,
+                            shape: BoxShape.circle,
+                            border: Border.all(color: Colors.white, width: 2),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+
+                  // Student Info
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                student.name,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: Colors.indigo[50],
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                student.className,
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.indigo[700],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          student.department,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(Icons.access_time,
+                                size: 14, color: Colors.grey[500]),
+                            const SizedBox(width: 4),
+                            Text(
+                              student.lastExeatDate,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.grey[500],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  // Stats
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      _buildStatBadge('${student.totalDays} days',
+                          Icons.calendar_today, Colors.blue),
+                      const SizedBox(height: 6),
+                      _buildStatBadge('${student.totalExeats} exeats',
+                          Icons.logout, Colors.green),
+                    ],
+                  ),
+
+                  const SizedBox(width: 8),
+                  Icon(Icons.chevron_right, color: Colors.grey[400]),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
-      child: Column(
+    );
+  }
+
+  Widget _buildStatBadge(String text, IconData icon, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      decoration: BoxDecoration(
+        color: color.withOpacity(0.1),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, color: color, size: 24),
-          const SizedBox(height: 8),
+          Icon(icon, size: 14, color: color),
+          const SizedBox(width: 4),
           Text(
-            value,
+            text,
             style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
               color: color,
             ),
           ),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 10,
-              color: Colors.grey[600],
-            ),
-            textAlign: TextAlign.center,
-          ),
         ],
       ),
     );
   }
 
-  Widget _buildStudentCard(StudentExeatSummary student) {
-    return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => StudentDetailAnalyticsScreen(
-              studentId: student.id,
-              studentName: student.name,
-            ),
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.search_off, size: 80, color: Colors.grey[400]),
+          const SizedBox(height: 16),
+          Text(
+            searchQuery.isEmpty ? 'No students available' : 'No students found',
+            style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: Color(0xff060121)),
           ),
-        );
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+          const SizedBox(height: 8),
+          Text(
+            searchQuery.isEmpty
+                ? 'Add students to see analytics'
+                : 'Try adjusting your search or filters',
+            style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+            textAlign: TextAlign.center,
+          ),
+          if (searchQuery.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            ElevatedButton.icon(
+              onPressed: () {
+                setState(() {
+                  searchQuery = '';
+                  _searchController.clear();
+                });
+              },
+              icon: const Icon(Icons.clear_all),
+              label: const Text('Clear Search'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xff060121),
+                foregroundColor: Colors.white,
+              ),
             ),
           ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Row(
-            children: [
-              // Profile Picture
-              CircleAvatar(
-                radius: 28,
-                backgroundColor: Colors.indigo[100],
-                child: student.profileImage != null
-                    ? ClipOval(
-                        child: Image.network(student.profileImage!,
-                            fit: BoxFit.cover))
-                    : Text(
-                        student.name.split(' ').map((n) => n[0]).take(2).join(),
-                        style: TextStyle(
-                          color: Colors.indigo[700],
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18,
-                        ),
-                      ),
-              ),
-              const SizedBox(width: 16),
+        ],
+      ),
+    );
+  }
+}
 
-              // Student Info
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      student.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      student.className,
-                      style: TextStyle(
-                        fontSize: 13,
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        Icon(Icons.access_time,
-                            size: 14, color: Colors.grey[500]),
-                        const SizedBox(width: 4),
-                        Text(
-                          student.lastExeatDate,
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey[500],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+// Add this new Overall Analytics Dashboard
+class OverallAnalyticsDashboard extends StatelessWidget {
+  const OverallAnalyticsDashboard({super.key});
 
-              // Stats
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.blue[50],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.calendar_today,
-                            size: 14, color: Colors.blue[700]),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${student.totalDays} days',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.blue[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 6),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.green[50],
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.logout, size: 14, color: Colors.green[700]),
-                        const SizedBox(width: 4),
-                        Text(
-                          '${student.totalExeats} exeats',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.green[700],
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(width: 8),
-              Icon(Icons.chevron_right, color: Colors.grey[400]),
-            ],
-          ),
-        ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Overall Analytics'),
+        backgroundColor: const Color(0xff060121),
+        foregroundColor: Colors.white,
+      ),
+      body: const Center(
+        child: Text('Overall Analytics Dashboard - Coming Soon!'),
       ),
     );
   }
@@ -869,38 +1285,4 @@ class _StudentDetailAnalyticsScreenState
     };
     return icons[reason] ?? Icons.help_outline;
   }
-}
-
-// Data Models
-class StudentExeatSummary {
-  final String id;
-  final String name;
-  final String className;
-  final int totalDays;
-  final int totalExeats;
-  final String lastExeatDate;
-  final String? profileImage;
-
-  StudentExeatSummary({
-    required this.id,
-    required this.name,
-    required this.className,
-    required this.totalDays,
-    required this.totalExeats,
-    required this.lastExeatDate,
-    this.profileImage,
-  });
-}
-
-class ExeatData {
-  final String month;
-  final int days;
-  ExeatData(this.month, this.days);
-}
-
-class RecentExeat {
-  final String date;
-  final String reason;
-  final int days;
-  RecentExeat(this.date, this.reason, this.days);
 }

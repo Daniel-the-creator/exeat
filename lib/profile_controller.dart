@@ -2,12 +2,12 @@
 import 'package:get/get.dart';
 
 class ProfileController extends GetxController {
-  var fullName = 'Student Name'.obs;
-  var matric = 'MAT12345'.obs;
-  var department = 'Computer Science'.obs;
+  var fullName = 'Ilesanmi Daniel'.obs;
+  var matric = 'DU0695'.obs;
+  var department = 'Software engineering'.obs;
   var level = '400 Level'.obs;
-  var email = 'student@university.edu.ng'.obs;
-  var phone = '+2348012345678'.obs;
+  var email = 'danielilesanmi04@gmail.com'.obs;
+  var phone = '+2347045678882'.obs;
 
   void updateProfile({
     required String newName,

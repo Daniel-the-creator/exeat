@@ -1,6 +1,6 @@
-import 'package:exeat_system/admin_dashboard.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:exeat_system/request_admin_controller.dart';
 
 class PendingRequests extends StatefulWidget {
   const PendingRequests({super.key});
@@ -9,125 +9,170 @@ class PendingRequests extends StatefulWidget {
   State<PendingRequests> createState() => _PendingRequestsState();
 }
 
-class _PendingRequestsState extends State<PendingRequests> {
-  final List<Map<String, String>> pendingData = [
-    {
-      "id": "001",
-      "student": "Fred Daniel",
-      "destination": "Abuja",
-      "leaveDate": "15/10/2025",
-      "returnDate": "18/10/2025",
-      "reason": "Attending family wedding",
-    },
-    {
-      "id": "002",
-      "student": "Chris Akingbogun",
-      "destination": "Enugu",
-      "leaveDate": "01/11/2025",
-      "returnDate": "03/11/2025",
-      "reason": "Medical appointment",
-    },
-    {
-      "id": "003",
-      "student": "Ayo Samuel",
-      "destination": "Delta",
-      "leaveDate": "01/11/2025",
-      "returnDate": "03/11/2025",
-      "reason": "Football appointment",
-    },
-    {
-      "id": "004",
-      "student": "Macfoy Victor",
-      "destination": "Sierra Leone",
-      "leaveDate": "01/11/2025",
-      "returnDate": "03/11/2025",
-      "reason": "To see Anita",
-    },
-    {
-      "id": "005",
-      "student": "Esuku Matthew",
-      "destination": "Apata",
-      "leaveDate": "01/11/2025",
-      "returnDate": "03/11/2025",
-      "reason": "To see Mercy",
-    },
-  ];
+class _PendingRequestsState extends State<PendingRequests>
+    with SingleTickerProviderStateMixin {
+  final requestController = Get.find<RequestAdminController>();
+  late AnimationController _animationController;
 
-  void _onViewPressed(Map<String, String> request) {
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
+    );
+    _animationController.forward();
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
+  void _showRequestDetails(ExeatRequest request) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        title: const Text(
-          "Pending Request Details",
-          style:
-              TextStyle(fontWeight: FontWeight.bold, color: Color(0xff060121)),
-        ),
-        content: SingleChildScrollView(
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 500),
+          padding: const EdgeInsets.all(24),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _DetailRow(title: "Student Name:", value: request["student"]!),
-              _DetailRow(title: "Destination:", value: request["destination"]!),
-              _DetailRow(title: "Leave Date:", value: request["leaveDate"]!),
-              _DetailRow(title: "Return Date:", value: request["returnDate"]!),
-              _DetailRow(title: "Reason:", value: request["reason"]!),
-              const SizedBox(height: 12),
-              const _StatusBadge(status: "Pending", color: Colors.orange),
+              Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.orange.shade400,
+                          Colors.orange.shade600
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.pending_actions_rounded,
+                        color: Colors.white, size: 24),
+                  ),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      "Request Details",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff060121),
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close_rounded),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              _buildDetailRow(
+                  Icons.person, "Student Name", request.studentName),
+              _buildDetailRow(
+                  Icons.school, "Matric Number", request.matricNumber),
+              _buildDetailRow(
+                  Icons.location_on, "Destination", request.destination),
+              _buildDetailRow(
+                  Icons.calendar_today, "Departure Date", request.leaveDate),
+              _buildDetailRow(Icons.event, "Return Date", request.returnDate),
+              _buildDetailRow(Icons.description, "Reason", request.reason),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        requestController.declineRequest(request);
+                      },
+                      icon: const Icon(Icons.cancel_rounded),
+                      label: const Text("Decline"),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: Colors.red,
+                        side: const BorderSide(color: Colors.red, width: 2),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        requestController.approveRequest(request);
+                      },
+                      icon: const Icon(Icons.check_circle_rounded),
+                      label: const Text("Approve"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         ),
-        actionsPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child:
-                const Text("Close", style: TextStyle(color: Colors.blueGrey)),
+      ),
+    );
+  }
+
+  Widget _buildDetailRow(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xff060121).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Icon(icon, size: 18, color: const Color(0xff060121)),
           ),
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              ElevatedButton.icon(
-                icon: const Icon(Icons.check, size: 18),
-                label: const Text("Approve"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text("Request Approved"),
-                        backgroundColor: Colors.green),
-                  );
-                },
-              ),
-              const SizedBox(width: 12),
-              ElevatedButton.icon(
-                icon: const Icon(Icons.close, size: 18),
-                label: const Text("Decline"),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.redAccent,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8)),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    color: Color(0xff060121),
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                        content: Text("Request Declined"),
-                        backgroundColor: Colors.redAccent),
-                  );
-                },
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
@@ -136,284 +181,232 @@ class _PendingRequestsState extends State<PendingRequests> {
 
   @override
   Widget build(BuildContext context) {
-    final screenW = MediaQuery.of(context).size.width;
-    final isSmall = screenW < 800; // threshold for switching layout
-    final horizontalPadding = isSmall ? 12.0 : 32.0;
-    final contentWidth = isSmall ? screenW - (horizontalPadding * 2) : 1000.0;
-    final titleSize = isSmall ? 20.0 : 26.0;
-    final headerIconSize = isSmall ? 20.0 : 24.0;
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isSmallScreen = screenWidth < 600;
+    double paddingValue = isSmallScreen ? 16 : 24;
 
     return Scaffold(
-      backgroundColor: const Color(0xfff7f8fa),
-      body: SafeArea(
-        child: Padding(
-          padding:
-              EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 16),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [const Color(0xff060121), const Color(0xff1a0f3e)],
+          ),
+        ),
+        child: SafeArea(
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // header row
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () => Get.to(() => const AdminDashboard()),
-                    child: Icon(Icons.arrow_back_ios_new,
-                        size: headerIconSize, color: Colors.black87),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      "Pending Requests (${pendingData.length})",
-                      style: TextStyle(
-                          color: const Color(0xff060121),
-                          fontWeight: FontWeight.bold,
-                          fontSize: titleSize),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-
-              // content card
-              Expanded(
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: contentWidth),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                        boxShadow: const [
-                          BoxShadow(
-                              color: Colors.black12,
-                              blurRadius: 10,
-                              offset: Offset(0, 4))
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(12),
-                        child: isSmall ? _buildListView() : _buildTableView(),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // mobile: stacked cards
-  Widget _buildListView() {
-    return ListView.separated(
-      itemCount: pendingData.length,
-      separatorBuilder: (_, __) => const SizedBox(height: 10),
-      padding: EdgeInsets.zero,
-      itemBuilder: (context, idx) {
-        final row = pendingData[idx];
-        return Card(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                        color: Colors.blueGrey.shade50,
-                        borderRadius: BorderRadius.circular(8)),
-                    child: Text(row['id']!,
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                      child: Text(row['student']!,
-                          style: const TextStyle(fontWeight: FontWeight.bold))),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text("Destination: ${row['destination']}"),
-              Text("Leave: ${row['leaveDate']}"),
-              Text("Return: ${row['returnDate']}"),
-              const SizedBox(height: 10),
-              Row(
-                children: [
-                  Expanded(
-                    child: OutlinedButton(
-                      onPressed: () => _onViewPressed(row),
-                      child: const Text("View Details"),
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      // quick approve action (example)
-                      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                          content: Text("Approved"),
-                          backgroundColor: Colors.green));
-                    },
-                    style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                    child: const Text("Approve"),
-                  ),
-                ],
-              ),
-            ]),
-          ),
-        );
-      },
-    );
-  }
-
-  // desktop/tablet: table-like rows
-  Widget _buildTableView() {
-    return Column(
-      children: [
-        // header row
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-              color: Colors.blueGrey.shade700,
-              borderRadius: BorderRadius.circular(8)),
-          child: const Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Flexible(flex: 1, child: Center(child: _HeaderText("ID"))),
-              Flexible(flex: 3, child: Center(child: _HeaderText("Student"))),
-              Flexible(
-                  flex: 3, child: Center(child: _HeaderText("Destination"))),
-              Flexible(flex: 2, child: Center(child: _HeaderText("Leave"))),
-              Flexible(flex: 2, child: Center(child: _HeaderText("Return"))),
-              Flexible(flex: 2, child: Center(child: _HeaderText("Action"))),
-            ],
-          ),
-        ),
-        const SizedBox(height: 8),
-        Expanded(
-          child: ListView.separated(
-            itemCount: pendingData.length,
-            separatorBuilder: (_, __) => const Divider(height: 1),
-            itemBuilder: (context, idx) {
-              final row = pendingData[idx];
-              return Padding(
-                padding: const EdgeInsets.symmetric(vertical: 10),
+              Container(
+                padding: EdgeInsets.all(paddingValue),
                 child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Flexible(
-                        flex: 1, child: Center(child: _TableText(row['id']!))),
-                    Flexible(
-                        flex: 3,
-                        child: Center(child: _TableText(row['student']!))),
-                    Flexible(
-                        flex: 3,
-                        child: Center(child: _TableText(row['destination']!))),
-                    Flexible(
-                        flex: 2,
-                        child: Center(child: _TableText(row['leaveDate']!))),
-                    Flexible(
-                        flex: 2,
-                        child: Center(child: _TableText(row['returnDate']!))),
-                    Flexible(
-                      flex: 2,
-                      child: Center(
-                        child: ElevatedButton(
-                          onPressed: () => _onViewPressed(row),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.blueGrey.shade700,
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 10),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8)),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.2),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: IconButton(
+                        onPressed: () => Get.back(),
+                        icon: const Icon(Icons.arrow_back_ios_new_rounded,
+                            color: Colors.white, size: 20),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text(
+                            "Pending Requests",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 24,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: 0.5,
+                            ),
                           ),
-                          child: const Text("View",
-                              style: TextStyle(color: Colors.white)),
-                        ),
+                          Obx(() => Text(
+                                "${requestController.pendingRequests.length} requests",
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.8),
+                                  fontSize: 14,
+                                ),
+                              )),
+                        ],
                       ),
                     ),
                   ],
                 ),
-              );
-            },
+              ),
+              Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(top: paddingValue * 0.5),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[50],
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: Obx(() {
+                    if (requestController.pendingRequests.isEmpty) {
+                      return _buildEmptyState();
+                    }
+                    return ListView.builder(
+                      padding: EdgeInsets.all(paddingValue),
+                      itemCount: requestController.pendingRequests.length,
+                      itemBuilder: (context, index) {
+                        final request =
+                            requestController.pendingRequests[index];
+                        return _buildAnimatedRequestCard(request, index);
+                      },
+                    );
+                  }),
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
-    );
-  }
-}
-
-// ---------- small supporting widgets ----------
-
-class _HeaderText extends StatelessWidget {
-  final String text;
-  const _HeaderText(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(text,
-        style:
-            const TextStyle(color: Colors.white, fontWeight: FontWeight.bold));
-  }
-}
-
-class _TableText extends StatelessWidget {
-  final String text;
-  const _TableText(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(text,
-        textAlign: TextAlign.center,
-        style: const TextStyle(
-            color: Color(0xff060121), fontWeight: FontWeight.w500));
-  }
-}
-
-class _DetailRow extends StatelessWidget {
-  final String title;
-  final String value;
-  const _DetailRow({required this.title, required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 8),
-      child: RichText(
-        text: TextSpan(
-          children: [
-            TextSpan(
-                text: "$title ",
-                style: const TextStyle(
-                    color: Colors.black87, fontWeight: FontWeight.w700)),
-            TextSpan(
-                text: value, style: const TextStyle(color: Colors.black54)),
-          ],
         ),
       ),
     );
   }
-}
 
-class _StatusBadge extends StatelessWidget {
-  final String status;
-  final Color color;
-  const _StatusBadge({required this.status, required this.color});
+  Widget _buildAnimatedRequestCard(ExeatRequest request, int index) {
+    return AnimatedBuilder(
+      animation: _animationController,
+      builder: (context, child) {
+        final delay = index * 0.1;
+        final animationValue = Curves.easeOutCubic.transform(
+          (_animationController.value - delay).clamp(0.0, 1.0) / (1.0 - delay),
+        );
+        return Transform.translate(
+          offset: Offset(0, 30 * (1 - animationValue)),
+          child: Opacity(opacity: animationValue, child: child),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.orange.withOpacity(0.3), width: 2),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.orange.withOpacity(0.1),
+              blurRadius: 15,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () => _showRequestDetails(request),
+            borderRadius: BorderRadius.circular(20),
+            child: Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(14),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [
+                          Colors.orange.shade400,
+                          Colors.orange.shade600
+                        ],
+                      ),
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.orange.withOpacity(0.3),
+                          blurRadius: 8,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: const Icon(Icons.pending_actions_rounded,
+                        color: Colors.white, size: 28),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          request.studentName,
+                          style: const TextStyle(
+                            fontSize: 17,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xff060121),
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          request.matricNumber,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Icon(Icons.location_on_rounded,
+                                size: 16, color: Colors.grey[600]),
+                            const SizedBox(width: 4),
+                            Text(
+                              request.destination,
+                              style: TextStyle(
+                                  fontSize: 13, color: Colors.grey[700]),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.arrow_forward_ios_rounded,
+                      color: Colors.grey[400], size: 18),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      decoration: BoxDecoration(
-          color: color.withOpacity(0.15),
-          borderRadius: BorderRadius.circular(8)),
-      child: Text(status,
-          style: TextStyle(color: color, fontWeight: FontWeight.bold)),
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: Colors.orange.withOpacity(0.1),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.inbox_rounded,
+                size: 80, color: Colors.orange.withOpacity(0.5)),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            "No Pending Requests",
+            style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff060121)),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            "All requests have been processed",
+            style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:exeat_system/login_screen__student.dart';
+import 'package:exeat_system/request_admin_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -10,7 +11,7 @@ void main() {
   // Initialize controllers before running the app
   Get.put<ProfileController>(ProfileController());
   Get.put<RequestController>(RequestController());
-
+  Get.put<RequestAdminController>(RequestAdminController());
   runApp(const MyApp());
 }
 
