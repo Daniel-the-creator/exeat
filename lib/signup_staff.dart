@@ -1,4 +1,3 @@
-import 'package:exeat_system/login_screen__student.dart';
 import 'package:exeat_system/loginscreen_staff.dart';
 import 'package:exeat_system/signup_student.dart';
 import 'package:flutter/material.dart';
@@ -85,14 +84,14 @@ class _SignupStaffState extends State<SignupStaff>
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xff060121),
-              const Color(0xff1a0f3e),
-              const Color(0xff2d1b5e),
+              Color(0xff060121),
+              Color(0xff1a0f3e),
+              Color(0xff2d1b5e),
             ],
           ),
         ),

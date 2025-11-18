@@ -80,14 +80,14 @@ class _LoginScreenState extends State<LoginScreen>
 
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              const Color(0xff060121),
-              const Color(0xff1a0f3e),
-              const Color(0xff2d1b5e),
+              Color(0xff060121),
+              Color(0xff1a0f3e),
+              Color(0xff2d1b5e),
             ],
           ),
         ),
@@ -122,10 +122,10 @@ class _LoginScreenState extends State<LoginScreen>
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
+                            gradient: const LinearGradient(
                               colors: [
-                                const Color(0xff060121),
-                                const Color(0xff2d1b5e),
+                                Color(0xff060121),
+                                Color(0xff2d1b5e),
                               ],
                             ),
                             shape: BoxShape.circle,
@@ -292,10 +292,10 @@ class _LoginScreenState extends State<LoginScreen>
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
           gradient: isActive
-              ? LinearGradient(
+              ? const LinearGradient(
                   colors: [
-                    const Color(0xff060121),
-                    const Color(0xff2d1b5e),
+                    Color(0xff060121),
+                    Color(0xff2d1b5e),
                   ],
                 )
               : null,
@@ -403,10 +403,10 @@ class _LoginScreenState extends State<LoginScreen>
     return Container(
       width: double.infinity,
       decoration: BoxDecoration(
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           colors: [
-            const Color(0xff060121),
-            const Color(0xff2d1b5e),
+            Color(0xff060121),
+            Color(0xff2d1b5e),
           ],
         ),
         borderRadius: BorderRadius.circular(16),
