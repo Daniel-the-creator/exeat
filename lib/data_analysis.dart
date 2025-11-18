@@ -82,7 +82,7 @@ class _StudentsExeatListScreenState extends State<StudentsExeatListScreen> {
           'Student Exeat Analytics',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color(0xff060121),
+        backgroundColor: const Color(0xff060121),
         elevation: 0,
       ),
       body: Column(
@@ -412,9 +412,9 @@ class _StudentDetailAnalyticsScreenState
       appBar: AppBar(
         title: Text(
           '${widget.studentName}\'s Analytics',
-          style: TextStyle(color: Colors.white),
+          style: const TextStyle(color: Colors.white),
         ),
-        backgroundColor: Color(0xff060121),
+        backgroundColor: const Color(0xff060121),
         elevation: 0,
         actions: [
           IconButton(
@@ -491,9 +491,10 @@ class _StudentDetailAnalyticsScreenState
                   padding: const EdgeInsets.only(right: 16, top: 16),
                   child: LineChart(
                     LineChartData(
-                      gridData: FlGridData(show: true, drawVerticalLine: false),
+                      gridData:
+                          const FlGridData(show: true, drawVerticalLine: false),
                       titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
+                        leftTitles: const AxisTitles(
                           sideTitles: SideTitles(
                               showTitles: true, reservedSize: 40, interval: 1),
                         ),
@@ -513,9 +514,9 @@ class _StudentDetailAnalyticsScreenState
                             },
                           ),
                         ),
-                        rightTitles: AxisTitles(
+                        rightTitles: const AxisTitles(
                             sideTitles: SideTitles(showTitles: false)),
-                        topTitles: AxisTitles(
+                        topTitles: const AxisTitles(
                             sideTitles: SideTitles(showTitles: false)),
                       ),
                       borderData: FlBorderData(show: false),
@@ -530,7 +531,7 @@ class _StudentDetailAnalyticsScreenState
                           isCurved: true,
                           color: Colors.indigo,
                           barWidth: 3,
-                          dotData: FlDotData(show: true),
+                          dotData: const FlDotData(show: true),
                           belowBarData: BarAreaData(
                               show: true,
                               color: Colors.indigo.withOpacity(0.1)),
@@ -555,9 +556,10 @@ class _StudentDetailAnalyticsScreenState
                   child: BarChart(
                     BarChartData(
                       alignment: BarChartAlignment.spaceAround,
-                      gridData: FlGridData(show: true, drawVerticalLine: false),
+                      gridData:
+                          const FlGridData(show: true, drawVerticalLine: false),
                       titlesData: FlTitlesData(
-                        leftTitles: AxisTitles(
+                        leftTitles: const AxisTitles(
                             sideTitles: SideTitles(
                                 showTitles: true,
                                 reservedSize: 40,
@@ -578,9 +580,9 @@ class _StudentDetailAnalyticsScreenState
                             },
                           ),
                         ),
-                        rightTitles: AxisTitles(
+                        rightTitles: const AxisTitles(
                             sideTitles: SideTitles(showTitles: false)),
-                        topTitles: AxisTitles(
+                        topTitles: const AxisTitles(
                             sideTitles: SideTitles(showTitles: false)),
                       ),
                       borderData: FlBorderData(show: false),
